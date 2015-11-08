@@ -1,5 +1,7 @@
 # Phone Cupholder Mount
 
+[Thingiverse Link](http://www.thingiverse.com/thing:1107476)
+
 I built this cup-holder phone mount for the following specifications:
 
 * Fit nice and snug in a Mini Cooper Cupholder
