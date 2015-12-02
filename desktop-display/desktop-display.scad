@@ -14,8 +14,13 @@ enclosureInsideWidth = 15;
 enclosureInsideHeight = mcuHeight * 1.2;
 enclosureInsideDepth = pcbWidth;
 enclosureThickness = 2;
+enclosureOffset = -5;
+
+snapFitThickness = 1;
 
 cableDiameter = 5;
+
+$fn = 1000;
 
 module sparkfunThingBoard() {    
     color("red")
@@ -31,7 +36,7 @@ module displayPCB() {
 
 module displayScreen() {    
     color("orange")
-    rotate([90, 0, 0])
+    rotate([90, 0, -90])
     translate([0, 0, -screenThickness / 2])
     cube([screenWidth, screenHeight, screenThickness], center = true);
 }
@@ -48,8 +53,15 @@ module enclosure() {
 }
 
 module cableHole() {
+    translate([-15, 0, -enclosureInsideHeight / 2])
     rotate([0, 90, 0])
     cylinder(h = 10, d = cableDiameter, center = true);
+}
+
+module cableCubic() {
+    translate([-12, 0, -enclosureInsideHeight / 2])
+    rotate([0, 90, 0])
+    cube([cableDiameter, cableDiameter * 2, cableDiameter * 2], center = true);
 }
 
 //rotate([90, 0, 0])
@@ -62,14 +74,12 @@ module cableHole() {
 module completeEnclosure() {
     difference() {
         difference() {
-            translate([-5, 0, 0])
+            translate([enclosureOffset, 0, 0])
             enclosure();
             
-            translate([-15, 0, -enclosureInsideHeight / 2])
             cableHole();
         }
         
-        rotate([0, 0, -90])
         displayScreen();
     }
 }
@@ -78,12 +88,31 @@ cutBlockDepth = (enclosureInsideDepth + enclosureThickness) / 2;
 cutBlockWidth = (enclosureInsideWidth + enclosureThickness) * 2;
 cutBlockHeight = (enclosureInsideHeight + enclosureThickness) * 2;
 
+module snapFit() {
+    difference() {
+        // Outside
+        translate([enclosureOffset, 0, -mcuHeight / 2 + pcbHeight / 2])
+        cube([enclosureInsideWidth, 5, enclosureInsideHeight], center = true);
+        
+        // Inside
+        color("yellow")
+        translate([enclosureOffset, 0, -mcuHeight / 2 + pcbHeight / 2])
+        cube([enclosureInsideWidth - snapFitThickness, 5 + snapFitThickness, enclosureInsideHeight - snapFitThickness], center = true);
+    }
+}
+
 module leftSide() {
     difference() {
         completeEnclosure();
         
         translate([-cutBlockWidth / 2, 0, -cutBlockHeight / 2])
         cube([cutBlockWidth, cutBlockDepth * 2, cutBlockHeight]);
+    }
+    
+    difference() {
+        snapFit();
+        displayScreen();
+        cableCubic();
     }
 }
 
@@ -96,5 +125,7 @@ module rightSide() {
     }
 }
 
-//leftSide();
-rightSide();
+leftSide();
+//rightSide();
+
+//completeEnclosure();
