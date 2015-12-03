@@ -15,6 +15,10 @@ enclosureOutsideHeight = enclosureInsideHeight + (enclosureThickness * 2);
 railWidth = 4;
 railHeight = 2;
 
+centerHoleRadius = enclosureInsideDepth / 3;
+
+$fn = 1000;
+
 module sevenSegDisplay() {
 	cube([displayWidth, displayDepth, displayHeight]);
 }
@@ -54,19 +58,37 @@ module labelRailSupport() {
 	cube([enclosureOutsideWidth, railWidth, railHeight]);
 }
 
+module centerSupport() {
+	translate([enclosureInsideWidth / 2 - displaySpacing / 2, 0, -enclosureThickness])
+	cube([displaySpacing, enclosureInsideDepth, enclosureOutsideHeight]);
+}
+
+module centerHole() {
+	cylinderHeight = 20;
+
+	translate([enclosureInsideWidth / 2 - cylinderHeight / 2, enclosureInsideDepth / 2, enclosureInsideHeight / 2])
+	rotate([0, 90, 0])
+	cylinder(h = cylinderHeight, r = centerHoleRadius);
+}
+
 module entireClosure() {
 	difference() {
 		difference() {
-			union() {
-				enclosure();
-				labelRailSupport();
-			}
+			difference() {
+				union() {
+					enclosure();
+					centerSupport();
+					labelRailSupport();
+				}
 
-			translate([0, -(displayDepth * 2.5), enclosureInsideHeight / 2 - displayHeight / 2])
-			scale([1, 5, 1])
-			combinedSevenSegDisplay();
+				translate([0, -(displayDepth * 2.5), enclosureInsideHeight / 2 - displayHeight / 2])
+				scale([1, 5, 1])
+				combinedSevenSegDisplay();
+			}
+			labelRail();
 		}
-		labelRail();
+
+		centerHole();
 	}
 }
 
