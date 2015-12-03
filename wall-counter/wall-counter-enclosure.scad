@@ -32,8 +32,12 @@ module combinedSevenSegDisplay() {
 module enclosure() {
 	difference() {
 		// Outside
-		translate([-enclosureThickness, -enclosureThickness, -enclosureThickness])
-		cube([enclosureOutsideWidth, enclosureOutsideDepth, enclosureOutsideHeight]);
+		minkowski() {
+			translate([-enclosureThickness, -enclosureThickness, -enclosureThickness])
+			cube([enclosureOutsideWidth, enclosureOutsideDepth, enclosureOutsideHeight]);
+			
+			cylinder(r=5);
+		}
 		
 		// Inside
 		cube([enclosureInsideWidth, enclosureInsideDepth, enclosureInsideHeight]);
