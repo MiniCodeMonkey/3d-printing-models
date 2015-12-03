@@ -110,9 +110,22 @@ module centerSupport() {
 module centerHole() {
 	cylinderHeight = 20;
 
-	translate([enclosureInsideWidth / 2 - cylinderHeight / 2, enclosureInsideDepth / 2, enclosureInsideHeight / 2])
-	rotate([0, 90, 0])
-	cylinder(h = cylinderHeight, r = centerHoleRadius);
+	union() {
+		// Cable hole
+		translate([enclosureInsideWidth / 2 - cylinderHeight / 2, enclosureInsideDepth / 2, enclosureInsideHeight / 2])
+		rotate([0, 90, 0])
+		cylinder(h = cylinderHeight, r = centerHoleRadius);
+
+		// Bottom connector hole
+		translate([enclosureInsideWidth / 2 - cylinderHeight / 2, enclosureInsideDepth / 2, enclosureInsideHeight / 4])
+		rotate([0, 90, 0])
+		cylinder(h = cylinderHeight, r = 1.5);
+
+		// Top connector hole
+		translate([enclosureInsideWidth / 2 - cylinderHeight / 2, enclosureInsideDepth / 2, enclosureInsideHeight / 2 + enclosureInsideHeight / 4])
+		rotate([0, 90, 0])
+		cylinder(h = cylinderHeight, r = 1.5);
+	}
 }
 
 module cableHole() {
