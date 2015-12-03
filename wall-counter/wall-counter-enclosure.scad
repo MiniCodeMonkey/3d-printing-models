@@ -1,10 +1,10 @@
 displayWidth = 120;
 displayHeight = 41;
 displayDepth = 5;
-displaySpacing = 4;
+displaySpacing = 6;
 
 enclosureInsideWidth = (displayWidth * 2) + displaySpacing;
-enclosureInsideHeight = displayHeight * 1.1;
+enclosureInsideHeight = displayHeight * 1.2;
 enclosureInsideDepth = 25;
 enclosureThickness = 3;
 
@@ -92,4 +92,13 @@ module entireClosure() {
 	}
 }
 
-entireClosure();
+module enclosureBack() {
+	difference() {
+		entireClosure();
+
+		//translate([-enclosureThickness - enclosureOutsideWidth / 2, -enclosureThickness * 2, -enclosureThickness - enclosureOutsideHeight / 2])
+		//cube([enclosureOutsideWidth * 2, enclosureOutsideDepth, enclosureOutsideHeight * 2]);
+	}
+}
+
+enclosureBack();
