@@ -1,16 +1,19 @@
 displayWidth = 120;
 displayHeight = 41;
 displayDepth = 5;
-displaySpacing = 3;
-
-labelSlotWidth = displayWidth;
-labelSlotHeight = 30;
-labelSlotDepth = 2;
+displaySpacing = 4;
 
 enclosureInsideWidth = (displayWidth * 2) + displaySpacing;
-enclosureInsideHeight = displayHeight * 1.1 + labelSlotHeight;
+enclosureInsideHeight = displayHeight * 1.1;
 enclosureInsideDepth = 25;
 enclosureThickness = 3;
+
+enclosureOutsideWidth = enclosureInsideWidth + (enclosureThickness * 2);
+enclosureOutsideDepth = enclosureInsideDepth + (enclosureThickness * 2);
+enclosureOutsideHeight = enclosureInsideHeight + (enclosureThickness * 2);
+
+railWidth = 4;
+railHeight = 2;
 
 module sevenSegDisplay() {
 	cube([displayWidth, displayDepth, displayHeight]);
@@ -26,64 +29,44 @@ module enclosure() {
 	difference() {
 		// Outside
 		translate([-enclosureThickness, -enclosureThickness, -enclosureThickness])
-		cube([
-			enclosureInsideWidth + (enclosureThickness * 2),
-			enclosureInsideDepth + (enclosureThickness * 2),
-			enclosureInsideHeight + (enclosureThickness * 2)
-		]);
+		cube([enclosureOutsideWidth, enclosureOutsideDepth, enclosureOutsideHeight]);
 		
 		// Inside
 		cube([enclosureInsideWidth, enclosureInsideDepth, enclosureInsideHeight]);
 	}
 }
 
-module labelBackground() {
-	translate([0, -enclosureThickness, 0])
-		cube([
-			labelSlotWidth,
-			labelSlotDepth * 3,
-			labelSlotHeight
-		]);
+module labelRail() {
+	union() {
+		// Horizontal
+		translate([-enclosureOutsideWidth / 2, -enclosureThickness / 2, -enclosureThickness / 2])
+		cube([enclosureOutsideWidth * 2, railWidth, railHeight]);
+
+		// Vertical
+		translate([-enclosureOutsideWidth / 2, -enclosureThickness / 2 + (railWidth / 4), -enclosureThickness / 2 - railWidth])
+		cube([enclosureOutsideWidth * 2, railHeight, railWidth]);
+	}
 }
 
-module labelSlot() {
-	translate([-5, 0, 0])
-		cube([
-			labelSlotWidth + 5,
-			labelSlotDepth,
-			labelSlotHeight
-		]);
-}
-
-module labelSlotCutOut() {
-	height = labelSlotHeight * 0.9;
-
-	translate([-5, -(labelSlotDepth * 4.5), (labelSlotHeight - height) / 2])
-		cube([
-			labelSlotWidth + 5,
-			labelSlotDepth * 5,
-			height
-		]);
+module labelRailSupport() {
+	// Horizontal
+	translate([-enclosureThickness, -enclosureThickness / 2, 0])
+	cube([enclosureOutsideWidth, railWidth, railHeight]);
 }
 
 module entireClosure() {
 	difference() {
 		difference() {
-			difference() {
-				union() {
-					enclosure();
-					labelBackground();
-				}
-
-				translate([0, -(displayDepth * 2.5), enclosureInsideHeight - displayHeight])
-				scale([1, 5, 1])
-				combinedSevenSegDisplay();
+			union() {
+				enclosure();
+				labelRailSupport();
 			}
 
-			labelSlot();
+			translate([0, -(displayDepth * 2.5), enclosureInsideHeight / 2 - displayHeight / 2])
+			scale([1, 5, 1])
+			combinedSevenSegDisplay();
 		}
-
-		labelSlotCutOut();
+		labelRail();
 	}
 }
 
