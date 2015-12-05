@@ -13,7 +13,7 @@ screenThickness = 10;
 pcbSlotThickness = 1.5;
 
 enclosureInsideWidth = 20;
-enclosureInsideHeight = mcuHeight * 1.35;
+enclosureInsideHeight = mcuHeight * 1.5;
 enclosureInsideDepth = screenPCBWidth;
 enclosureThickness = 2;
 enclosureOffset = -5;
@@ -24,6 +24,8 @@ snapFitGapWidth = 2.5;
 cableDiameter = 4;
 
 enclosureZ = -mcuHeight / 2 + screenPCBHeight / 2;
+
+rotaryEncoderDiamater = 6.9;
 
 $fn = 1000;
 
@@ -37,15 +39,21 @@ module mcuPCB() {
 module mcuPCBSlot() {
     difference() {
         difference() {
-            translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
-            cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, mcuHeight + pcbSlotThickness], center = true);
+            difference() {
+                translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
+                cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, mcuHeight + pcbSlotThickness], center = true);
 
-            mcuPCB();
+                mcuPCB();
+            }
+
+            // Cut-out for USB power
+            translate([-8, enclosureInsideDepth / 5, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight - 10 / 2])
+            cube([mcuThickness, mcuWidth, 10], center = true);
         }
 
-        // Cut-out for USB power
-        translate([-8, enclosureInsideDepth / 5, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight - 10 / 2])
-        cube([mcuThickness, mcuWidth, 10], center = true);
+        // Center Cut-out
+        translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
+        cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, (mcuHeight * 0.9) + pcbSlotThickness], center = true);
     }
 }
 
