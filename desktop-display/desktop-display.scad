@@ -1,53 +1,97 @@
-mcuWidth = 27;
-mcuHeight = 58;
-mcuThickness = 2;
+mcuWidth = 26.6;
+mcuHeight = 55.45;
+mcuThickness = 3.1;
 
-pcbWidth = 38;
-pcbHeight = 29;
-pcbThickness = 2;
+screenPCBWidth = 35.5;
+screenPCBHeight = 29.1;
+screenPCBThickness = 5.3;
 
 screenWidth = 25;
-screenHeight = 14;
+screenHeight = 16;
 screenThickness = 10;
 
-enclosureInsideWidth = 15;
-enclosureInsideHeight = mcuHeight * 1.2;
-enclosureInsideDepth = pcbWidth;
+pcbSlotThickness = 1.5;
+
+enclosureInsideWidth = 20;
+enclosureInsideHeight = mcuHeight * 1.35;
+enclosureInsideDepth = screenPCBWidth;
 enclosureThickness = 2;
 enclosureOffset = -5;
 
-snapFitThickness = 1;
+snapFitThickness = 2;
+snapFitGapWidth = 2.5;
 
-cableDiameter = 5;
+cableDiameter = 4;
+
+enclosureZ = -mcuHeight / 2 + screenPCBHeight / 2;
 
 $fn = 1000;
 
-module sparkfunThingBoard() {    
+module mcuPCB() {    
     color("red")
-    rotate([0, 90, 0])
-    cube([mcuWidth, mcuHeight, mcuThickness], center = true);
+    
+    translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2])
+    cube([mcuThickness, mcuWidth, mcuHeight], center = true);
+}
+
+module mcuPCBSlot() {
+    difference() {
+        translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
+        cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, mcuHeight + pcbSlotThickness], center = true);
+
+        mcuPCB();
+    }
 }
 
 module displayPCB() {
     color("black")
-    rotate([90, 0, 0])
-    cube([pcbWidth, pcbHeight, pcbThickness], center = true);
+    rotate([90, 0, -90])
+    translate([0, 0, 0])
+    cube([screenPCBWidth, screenPCBHeight, screenPCBThickness], center = true);
+}
+
+module displayPCBSlot() {
+    difference() {
+        difference() {
+            difference() {
+                rotate([90, 0, -90])
+                translate([0, 0, 0 + (pcbSlotThickness / 2)])
+                cube([screenPCBWidth, screenPCBHeight + (pcbSlotThickness * 2), screenPCBThickness + pcbSlotThickness], center = true);
+
+                displayPCB();
+            }
+
+            // Cable gap
+            gapHeight = 4.9;
+            rotate([90, 0, -90])
+            translate([0, screenPCBHeight / 2 - gapHeight / 2, screenPCBThickness + (pcbSlotThickness / 2)])
+            cube([screenPCBWidth, gapHeight, screenPCBThickness + pcbSlotThickness], center = true);
+        }
+        
+        rotate([90, 0, -90])
+        translate([0, 0, 0 + (pcbSlotThickness / 2)])
+        cube([screenPCBWidth - (screenPCBThickness * 2), screenPCBHeight + (pcbSlotThickness * 2), screenPCBThickness + pcbSlotThickness], center = true);
+    }
 }
 
 module displayScreen() {    
     color("orange")
     rotate([90, 0, -90])
-    translate([0, 0, -screenThickness / 2])
+    translate([0, (screenPCBHeight / 2) - (screenHeight / 2) - 5, -screenThickness / 2])
     cube([screenWidth, screenHeight, screenThickness], center = true);
 }
 
 module enclosure() {    
-    //color("transparent")
-    translate([0, 0, -mcuHeight / 2 + pcbHeight / 2])
+    translate([0, 0, enclosureZ])
     
     difference() {
-        cube([enclosureInsideWidth + enclosureThickness, enclosureInsideDepth + enclosureThickness, enclosureInsideHeight + enclosureThickness], center = true);
+        // Outside
+        minkowski() {
+            cube([enclosureInsideWidth + enclosureThickness, enclosureInsideDepth + enclosureThickness, enclosureInsideHeight + enclosureThickness], center = true);
+            cylinder(r=3);
+        }
         
+        // Inside
         cube([enclosureInsideWidth, enclosureInsideDepth, enclosureInsideHeight], center = true);
     }
 }
@@ -64,23 +108,22 @@ module cableCubic() {
     cube([cableDiameter, cableDiameter * 2, cableDiameter * 2], center = true);
 }
 
-//rotate([90, 0, 0])
-//translate([-5, -mcuHeight / 2 + 10, 0])
-//sparkfunThingBoard();
-
-//rotate([0, 0, -90])
-//displayPCB();
-
 module completeEnclosure() {
-    difference() {
+    union() {
         difference() {
-            translate([enclosureOffset, 0, 0])
-            enclosure();
+            difference() {
+                translate([enclosureOffset, 0, 0])
+                enclosure();
+                
+                cableHole();
+            }
             
-            cableHole();
+            displayScreen();
         }
-        
-        displayScreen();
+
+        translate([1.9, 0, 0])
+        displayPCBSlot();
+        mcuPCBSlot();
     }
 }
 
@@ -91,13 +134,13 @@ cutBlockHeight = (enclosureInsideHeight + enclosureThickness) * 2;
 module snapFit() {
     difference() {
         // Outside
-        translate([enclosureOffset, 0, -mcuHeight / 2 + pcbHeight / 2])
-        cube([enclosureInsideWidth, 5, enclosureInsideHeight], center = true);
+        translate([enclosureOffset, 0, -mcuHeight / 2 + screenPCBHeight / 2])
+        cube([enclosureInsideWidth, enclosureInsideDepth / 5, enclosureInsideHeight], center = true);
         
         // Inside
         color("yellow")
-        translate([enclosureOffset, 0, -mcuHeight / 2 + pcbHeight / 2])
-        cube([enclosureInsideWidth - snapFitThickness, 5 + snapFitThickness, enclosureInsideHeight - snapFitThickness], center = true);
+        translate([enclosureOffset, 0, -mcuHeight / 2 + screenPCBHeight / 2])
+        cube([enclosureInsideWidth - snapFitThickness, (enclosureInsideDepth / 5) + snapFitThickness, enclosureInsideHeight - snapFitThickness], center = true);
     }
 }
 
@@ -109,10 +152,16 @@ module leftSide() {
         cube([cutBlockWidth, cutBlockDepth * 2, cutBlockHeight]);
     }
     
+
     difference() {
-        snapFit();
-        displayScreen();
-        cableCubic();
+        difference() {
+            snapFit();
+            displayScreen();
+            cableCubic();
+        }
+
+        translate([-cutBlockWidth / 2, snapFitGapWidth, -cutBlockHeight / 2])
+        cube([cutBlockWidth, cutBlockDepth * 2, cutBlockHeight]);
     }
 }
 
@@ -129,3 +178,4 @@ leftSide();
 //rightSide();
 
 //completeEnclosure();
+
