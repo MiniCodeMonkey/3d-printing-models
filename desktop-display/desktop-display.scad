@@ -1,9 +1,9 @@
 mcuWidth = 26.6;
-mcuHeight = 55.45;
+mcuHeight = 55.55;
 mcuThickness = 3.1;
 
 screenPCBWidth = 35.5;
-screenPCBHeight = 29.1;
+screenPCBHeight = 29.2;
 screenPCBThickness = 5.3;
 
 screenWidth = 25;
@@ -18,7 +18,7 @@ enclosureInsideDepth = screenPCBWidth;
 enclosureThickness = 2;
 enclosureOffset = -5;
 
-snapFitThickness = 2;
+snapFitThickness = 1.5;
 snapFitGapWidth = 2.5;
 
 cableDiameter = 4;
@@ -36,10 +36,16 @@ module mcuPCB() {
 
 module mcuPCBSlot() {
     difference() {
-        translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
-        cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, mcuHeight + pcbSlotThickness], center = true);
+        difference() {
+            translate([-8, 0, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight / 2 - pcbSlotThickness / 2])
+            cube([mcuThickness + (pcbSlotThickness * 2), mcuWidth, mcuHeight + pcbSlotThickness], center = true);
 
-        mcuPCB();
+            mcuPCB();
+        }
+
+        // Cut-out for USB power
+        translate([-8, enclosureInsideDepth / 5, -(snapFitThickness / 2) + enclosureZ + enclosureInsideHeight / 2 - mcuHeight - 10 / 2])
+        cube([mcuThickness, mcuWidth, 10], center = true);
     }
 }
 
@@ -88,7 +94,7 @@ module enclosure() {
         // Outside
         minkowski() {
             cube([enclosureInsideWidth + enclosureThickness, enclosureInsideDepth + enclosureThickness, enclosureInsideHeight + enclosureThickness], center = true);
-            cylinder(r=3);
+            cylinder(r=1.5);
         }
         
         // Inside
@@ -97,13 +103,13 @@ module enclosure() {
 }
 
 module cableHole() {
-    translate([-15, 0, -enclosureInsideHeight / 2])
+    translate([-15, 0, -enclosureInsideHeight / 2 - 7])
     rotate([0, 90, 0])
     cylinder(h = 10, d = cableDiameter, center = true);
 }
 
 module cableCubic() {
-    translate([-12, 0, -enclosureInsideHeight / 2])
+    translate([-12, 0, -enclosureInsideHeight / 2 - 7])
     rotate([0, 90, 0])
     cube([cableDiameter, cableDiameter * 2, cableDiameter * 2], center = true);
 }
@@ -123,6 +129,8 @@ module completeEnclosure() {
 
         translate([1.9, 0, 0])
         displayPCBSlot();
+
+        translate([0, -5, 0])
         mcuPCBSlot();
     }
 }
