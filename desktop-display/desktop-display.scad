@@ -102,7 +102,7 @@ module enclosure() {
         // Outside
         minkowski() {
             cube([enclosureInsideWidth + enclosureThickness, enclosureInsideDepth + enclosureThickness, enclosureInsideHeight + enclosureThickness], center = true);
-            cylinder(r=1.5);
+            cylinder(r=2.5);
         }
         
         // Inside
@@ -122,6 +122,12 @@ module cableCubic() {
     cube([cableDiameter, cableDiameter * 2, cableDiameter * 2], center = true);
 }
 
+module rotaryEncoderHole() {
+    translate([-2, 0, -enclosureInsideHeight / 2 + 4])
+    rotate([90, 0, 0])
+    cylinder(h = 50, d = rotaryEncoderDiamater, center = true);
+}
+
 module completeEnclosure() {
     union() {
         difference() {
@@ -138,8 +144,8 @@ module completeEnclosure() {
         translate([1.9, 0, 0])
         displayPCBSlot();
 
-        translate([0, -5, 0])
-        mcuPCBSlot();
+        //translate([0, -5, 0])
+        //mcuPCBSlot();
     }
 }
 
@@ -183,15 +189,19 @@ module leftSide() {
 
 module rightSide() {
     difference() {
-        completeEnclosure();
-        
-        translate([-cutBlockWidth / 2, -cutBlockDepth * 2, -cutBlockHeight / 2])
-        cube([cutBlockWidth, cutBlockDepth * 2, cutBlockHeight]);
+        difference() {
+            completeEnclosure();
+            
+            translate([-cutBlockWidth / 2, -cutBlockDepth * 2, -cutBlockHeight / 2])
+            cube([cutBlockWidth, cutBlockDepth * 2, cutBlockHeight]);
+        }
+
+        rotaryEncoderHole();
     }
 }
 
-leftSide();
-//rightSide();
+//leftSide();
+rightSide();
 
 //completeEnclosure();
 
