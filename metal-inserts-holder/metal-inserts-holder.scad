@@ -6,33 +6,8 @@ itemsCount = 5;
 
 $fn = 1000;
 
-// From http://www.thingiverse.com/thing:9347/#files
-module roundedRect(size, radius)
-{
-    x = size[0];
-    y = size[1];
-    z = size[2];
-
-    linear_extrude(height=z)
-    hull()
-    {
-        // place 4 circles in the corners, with the given radius
-        translate([(-x/2)+(radius/2), (-y/2)+(radius/2), 0])
-        circle(r=radius);
-    
-        translate([(x/2)-(radius/2), (-y/2)+(radius/2), 0])
-        circle(r=radius);
-    
-        translate([(-x/2)+(radius/2), (y/2)-(radius/2), 0])
-        circle(r=radius);
-    
-        translate([(x/2)-(radius/2), (y/2)-(radius/2), 0])
-        circle(r=radius);
-    }
-}
-
 module container() {
-    difference() {
+    /*difference() {
         outerWidth = itemWidth;
 
         x = outerWidth;
@@ -44,20 +19,31 @@ module container() {
 
         translate([0, 0, 2])
             cube([itemWidth, itemsCount * itemThicknessMax, height * 2]);
+    }*/
+
+    difference() {
+        difference() {
+            translate([itemWidth / 2, itemsCount * itemThicknessMax, 0])
+            rotate([90, 0, 0])
+                cylinder((itemsCount * itemThicknessMax) + (itemThicknessMax - itemThicknessMin), itemWidth / 4, itemWidth / 2);
+
+            translate([0, -itemThicknessMax, -itemWidth / 2 - itemThicknessMax])
+                cube([itemWidth, (itemsCount + 2) * itemThicknessMax, height * 2]);
+        }
+
+        translate([0, -itemThicknessMax, -(itemThicknessMax - itemThicknessMin) + height])
+                cube([itemWidth, (itemsCount + 2) * itemThicknessMax, height * 2]);
     }
 }
 
 module slots() {
     for (a = [0 : itemsCount - 1]) {
-        difference() {
-            translate([0, (a * itemThicknessMax), 0])
-                cube([itemWidth, itemThicknessMax, height * 1]);
-
-            translate([0, (a * itemThicknessMax), 0])
-                cube([itemWidth, itemThicknessMin, height * 3]);
-        }
+        translate([0, (a * itemThicknessMax), 0])
+            cube([itemWidth, itemThicknessMin, height * 10]);
     }
 }
 
-container();
-slots();
+difference() {
+    container();
+    slots();
+}
