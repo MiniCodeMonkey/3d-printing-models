@@ -1,9 +1,10 @@
 deviceThickness = 9.75;
 holderThickness = 3;
 holderWidth = 145; // Make this wider if your printer build volume allows it!
-holderHeight = 30;
+holderHeight = 40;
 
-screwHoleDiameter = 4;
+screwHoleDiameterOut = 4;
+screwHoleDiameterIn = 7.85;
 
 module holder() {
 	cube([holderWidth, deviceThickness + (holderThickness * 2), holderHeight]);
@@ -21,7 +22,7 @@ module frontLip() {
 
 module screwHole() {
 	rotate([90, 0, 0])
-	cylinder(h=20, r=screwHoleDiameter / 2, center=false, $fn=80);
+	cylinder(h=holderThickness, r1=screwHoleDiameterOut / 2, r2 = screwHoleDiameterIn / 2, center=false, $fn=80);
 }
 
 difference() {
@@ -34,9 +35,9 @@ difference() {
 		frontLip();
 	}
 
-	translate([holderWidth / 4, deviceThickness + (holderThickness * 2) + 10, holderHeight / 1.5])
-	screwHole();
+	translate([holderWidth / 4, deviceThickness + (holderThickness * 2), holderHeight / 1.5])
+	#screwHole();
 
-	translate([(holderWidth / 4) * 3, deviceThickness + (holderThickness * 2) + 10, holderHeight / 1.5])
+	translate([(holderWidth / 4) * 3, deviceThickness + (holderThickness * 2), holderHeight / 1.5])
 	screwHole();
 }
