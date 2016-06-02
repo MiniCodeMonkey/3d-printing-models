@@ -68,25 +68,29 @@ module creditCard() {
 }
 
 module topSlideRail() {
+	creditCardThickness = 3.5;
+	creditCardWidth = 55;
+
 	difference() {
 		translate([0, 0, 0])
-		cube([innerWidth, 94, 1.2 + (thickness * 2)], center = true);
+		cube([innerWidth, 94, creditCardThickness + (thickness * 2)], center = true);
 
 		translate([0, thickness, 0])
-		cube([54, 85.6 + 10, 1.2], center = true);
+		cube([creditCardWidth, 85.6 + 10, creditCardThickness], center = true);
 
 		translate([0, thickness, 0])
-		cube([54 - 5, 85.6 + 10, 1.2 + (thickness * 3)], center = true);
+		cube([creditCardWidth - 5, 85.6 + 10, creditCardThickness + (thickness * 3)], center = true);
 	}
 }
 
 module finalTopCutout() {
-	translate([0, 0, height / 2 + 1])
+	translate([0, 0, height / 2 + 2.5])
 	cube([innerWidth * 1.5, length + (thickness * 2), 10], center = true);
 }
 
 module mountingHole() {
 	cylinder(h = 6, d = 2);
+	cylinder(h = 1, d = 5);
 }
 
 module screenCutOut() {
@@ -97,13 +101,13 @@ module screenMount() {
 	translate([0, 0, 0])
 	mountingHole();
 
-	translate([0, 34.8, 0])
+	translate([0, 33.1, 0])
 	mountingHole();
 
-	translate([34.8, 0, 0])
+	translate([33.4, 0, 0])
 	mountingHole();
 
-	translate([34.8, 34.8, 0])
+	translate([33.4, 33.1, 0])
 	mountingHole();
 }
 
@@ -115,13 +119,13 @@ module mcuMount() {
 	translate([0, 0, 0])
 	mountingHole();
 
-	translate([0, 19, 0])
+	translate([0, 17.5, 0])
 	mountingHole();
 
-	translate([47.5, 0, 0])
+	translate([44.95, 0, 0])
 	mountingHole();
 
-	translate([47.5, 19, 0])
+	translate([44.95, 17.5, 0])
 	mountingHole();	
 }
 
@@ -156,7 +160,7 @@ difference() {
 	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3.5, -6 + 4.9 + screenWidthAndHeight, -12])
 	screenCutOut();
 
-	translate([47.5 / 2, -40 + 19 / 2 + 4, -9.5])
+	translate([47.5 / 2, -40 + 17.5 / 2 + 4, -9.5])
 	usbCutOut();
 
 	translate([0, -10, 8])
