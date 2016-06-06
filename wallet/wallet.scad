@@ -43,7 +43,7 @@ module mainStructure() {
 
 module topCutout() {
 	translate([0, thickness * 2, height / 2 - 2])
-	cube([innerWidth, length + (thickness * 2), 10], center = true);
+	cube([innerWidth, length + thickness - 1, 10], center = true);
 }
 
 module bottomCutout() {
@@ -55,7 +55,7 @@ module fullMainStructure() {
 	difference() {
 		mainStructure();
 
-		scale([0.955, 0.955, 0.955])
+		scale([0.92, 0.92, 0.92])
 		mainStructure();
 
 		topCutout();
@@ -68,7 +68,7 @@ module creditCard() {
 }
 
 module topSlideRail() {
-	creditCardThickness = 3.5;
+	creditCardThickness = 2;
 	creditCardWidth = 55;
 
 	difference() {
@@ -84,12 +84,12 @@ module topSlideRail() {
 }
 
 module finalTopCutout() {
-	translate([0, 0, height / 2 + 2.5])
+	translate([0, 0, height / 2 + 1])
 	cube([innerWidth * 1.5, length + (thickness * 2), 10], center = true);
 }
 
 module mountingHole() {
-	cylinder(h = 6, d = 2);
+	cylinder(h = 6, d = 1.5);
 	cylinder(h = 1, d = 5);
 }
 
@@ -157,23 +157,23 @@ difference() {
 		finalTopCutout();
 	}
 
-	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3.5, -6 + 4.9 + screenWidthAndHeight, -12])
+	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3, -6 + 4.9 + screenWidthAndHeight, -12])
 	screenCutOut();
 
-	translate([47.5 / 2, -40 + 17.5 / 2 + 4, -9.5])
+	translate([47.5 / 2, -40 + 17.5 / 2 + 4, -7.75])
 	usbCutOut();
 
 	translate([0, -10, 8])
 	fingerGrip();
 
-	translate([20, 22, -10])
-	fingerHole();
+	//translate([20, 22, -10])
+	//fingerHole();
 }
 
 translate([-34.8 / 2, 6, -12])
 screenMount();
 
-translate([-47.5 / 2, -40 + 4, -12])
+translate([-47.5 / 2 + 1.5, -40 + 4, -12])
 mcuMount();
 
 //translate([19, 22, -9.5])
