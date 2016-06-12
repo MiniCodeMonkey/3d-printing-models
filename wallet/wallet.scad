@@ -1,3 +1,5 @@
+include <standoff.scad>
+
 length = 94;
 innerWidth = 55;
 height = 28;
@@ -88,9 +90,8 @@ module finalTopCutout() {
 	cube([innerWidth * 1.5, length + (thickness * 2), 10], center = true);
 }
 
-module mountingHole() {
-	cylinder(h = 6, d = 1.5);
-	cylinder(h = 1, d = 5);
+module pcbSnapStandoff() {
+	boardmount(HoleD = 1.5, BoardThick = 1.70, lift=2);
 }
 
 module screenCutOut() {
@@ -99,16 +100,16 @@ module screenCutOut() {
 
 module screenMount() {
 	translate([0, 0, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([0, 33.1, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([33.4, 0, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([33.4, 33.1, 0])
-	mountingHole();
+	pcbSnapStandoff();
 }
 
 module usbCutOut() {
@@ -117,16 +118,16 @@ module usbCutOut() {
 
 module mcuMount() {
 	translate([0, 0, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([0, 17.5, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([44.95, 0, 0])
-	mountingHole();
+	pcbSnapStandoff();
 
 	translate([44.95, 17.5, 0])
-	mountingHole();	
+	pcbSnapStandoff();	
 }
 
 module fingerGrip() {
@@ -178,5 +179,3 @@ mcuMount();
 
 //translate([19, 22, -9.5])
 //fingerHoleProtector();
-
-//creditCard();
