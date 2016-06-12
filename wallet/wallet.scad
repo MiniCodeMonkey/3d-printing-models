@@ -1,6 +1,6 @@
 include <standoff.scad>
 
-length = 94;
+length = 92;
 innerWidth = 55;
 height = 28;
 thickness = 2.2;
@@ -29,6 +29,9 @@ module bothSides() {
 
 		mirror([1, 0, 0])
 		side();
+
+		translate([0, 0, -8])
+		cube([innerWidth + 10, length, height * 0.3], center = true);
 	}
 }
 
@@ -75,7 +78,7 @@ module topSlideRail() {
 
 	difference() {
 		translate([0, 0, 0])
-		cube([innerWidth, 94, creditCardThickness + (thickness * 2)], center = true);
+		cube([innerWidth, length, creditCardThickness + (thickness * 2)], center = true);
 
 		translate([0, thickness, 0])
 		cube([creditCardWidth, 85.6 + 10, creditCardThickness], center = true);
@@ -114,6 +117,9 @@ module screenMount() {
 
 module usbCutOut() {
 	cube([thickness * 10, usbWidth, usbHeight], center = true);
+
+	translate([thickness * 2 + 1, 0, 0])
+	cube([thickness * 2, usbWidth * 3, usbHeight * 1.4], center = true);
 }
 
 module mcuMount() {
@@ -132,20 +138,15 @@ module mcuMount() {
 
 module fingerGrip() {
 	rotate([90, 0, 0])
-	cylinder(h = length, d = fingerDiamater, center = true);
-}
+	union() {
+		translate([0, 46, length / 2 - 10])
+		cube([fingerDiamater, length, fingerDiamater], center = true);
 
-module fingerHole() {
-	cylinder(h = 8, d = fingerDiamater * 0.8, center = true);
-}
-
-module fingerHoleProtector() {
-	difference() {
-		cylinder(h = 6, d = fingerDiamater * 1.15, center = true);
-		fingerHole();
+		cylinder(h = length, d = fingerDiamater, center = true);
 	}
 }
 
+screenCenterDelta = 1.5;
 difference() {
 	difference() {
 		union() {
@@ -158,24 +159,18 @@ difference() {
 		finalTopCutout();
 	}
 
-	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3, -6 + 4.9 + screenWidthAndHeight, -12])
+	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3.25 + screenCenterDelta, -0.85 + screenWidthAndHeight, -12])
 	screenCutOut();
 
-	translate([47.5 / 2, -40 + 17.5 / 2 + 4, -7.75])
+	translate([47.5 / 2, -26 + 17.5 / 2, -7.75])
 	usbCutOut();
 
-	translate([0, -10, 8])
+	translate([0, -10, 2])
 	fingerGrip();
-
-	//translate([20, 22, -10])
-	//fingerHole();
 }
 
-translate([-34.8 / 2, 6, -12])
+translate([-34.8 / 2 + screenCenterDelta, 6, -12])
 screenMount();
 
-translate([-47.5 / 2 + 1.5, -40 + 4, -12])
+translate([-47.5 / 2 + 8, -26, -12])
 mcuMount();
-
-//translate([19, 22, -9.5])
-//fingerHoleProtector();
