@@ -3,7 +3,7 @@ include <standoff.scad>
 length = 92;
 innerWidth = 55;
 height = 28;
-thickness = 2.2;
+thickness = 2;
 fingerDiamater = 16;
 
 screenWidthAndHeight = 24.5;
@@ -47,8 +47,8 @@ module mainStructure() {
 }
 
 module topCutout() {
-	translate([0, thickness * 2, height / 2 - 2])
-	cube([innerWidth, length + thickness - 1, 10], center = true);
+	translate([0, thickness * 2, height / 2 - 3])
+	cube([innerWidth, length + thickness - 2, 10], center = true);
 }
 
 module bottomCutout() {
@@ -77,12 +77,15 @@ module topSlideRail() {
 	creditCardWidth = 55;
 
 	difference() {
+		// Main structure
 		translate([0, 0, 0])
 		cube([innerWidth, length, creditCardThickness + (thickness * 2)], center = true);
 
+		// Credit card cut out
 		translate([0, thickness, 0])
 		cube([creditCardWidth, 85.6 + 10, creditCardThickness], center = true);
 
+		// Inner cutout
 		translate([0, thickness, 0])
 		cube([creditCardWidth - 5, 85.6 + 10, creditCardThickness + (thickness * 3)], center = true);
 	}
@@ -118,8 +121,8 @@ module screenMount() {
 module usbCutOut() {
 	cube([thickness * 10, usbWidth, usbHeight], center = true);
 
-	translate([thickness * 2 + 1, 0, 0])
-	cube([thickness * 2, usbWidth * 3, usbHeight * 1.4], center = true);
+	translate([thickness * 2 + 2, 0, 0])
+	cube([thickness * 2, usbWidth * 4, usbHeight * 1.6], center = true);
 }
 
 module mcuMount() {
@@ -172,5 +175,5 @@ difference() {
 translate([-34.8 / 2 + screenCenterDelta, 6, -12])
 screenMount();
 
-translate([-47.5 / 2 + 8, -26, -12])
+translate([-47.5 / 2 + 8.5, -26, -12])
 mcuMount();
