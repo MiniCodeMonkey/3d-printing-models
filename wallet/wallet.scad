@@ -1,6 +1,6 @@
 include <standoff.scad>
 
-length = 92;
+length = 93;
 innerWidth = 55;
 height = 28;
 thickness = 2;
@@ -73,7 +73,7 @@ module creditCard() {
 }
 
 module topSlideRail() {
-	creditCardThickness = 2;
+	creditCardThickness = 1.8;
 	creditCardWidth = 55;
 
 	difference() {
@@ -82,7 +82,7 @@ module topSlideRail() {
 		cube([innerWidth, length, creditCardThickness + (thickness * 2)], center = true);
 
 		// Credit card cut out
-		translate([0, thickness, 0])
+		translate([0, thickness + 4, 0])
 		cube([creditCardWidth, 85.6 + 10, creditCardThickness], center = true);
 
 		// Inner cutout
@@ -97,7 +97,7 @@ module finalTopCutout() {
 }
 
 module pcbSnapStandoff() {
-	boardmount(HoleD = 1.5, BoardThick = 1.70, lift=2);
+	boardmount(HoleD = 2.7, BoardThick = 1.60, lift=2);
 }
 
 module screenCutOut() {
@@ -149,31 +149,35 @@ module fingerGrip() {
 	}
 }
 
-screenCenterDelta = 1.5;
-difference() {
+module wallet() {
+	screenCenterDelta = 1.5;
 	difference() {
-		union() {
-			fullMainStructure();
+		difference() {
+			union() {
+				fullMainStructure();
 
-			translate([0, 0, 1 + (thickness * 3)])
-			topSlideRail();
+				translate([0, 0, 1 + (thickness * 3)])
+				topSlideRail();
+			}
+
+			finalTopCutout();
 		}
 
-		finalTopCutout();
+		translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3.25 + screenCenterDelta, -0.85 + screenWidthAndHeight, -12])
+		screenCutOut();
+
+		translate([47.5 / 2, -26 + 17.5 / 2, -7.5])
+		usbCutOut();
+
+		translate([0, -10, 2])
+		fingerGrip();
 	}
 
-	translate([-34.8 / 2 + screenWidthAndHeight / 2 + 3.25 + screenCenterDelta, -0.85 + screenWidthAndHeight, -12])
-	screenCutOut();
+	translate([-34.8 / 2 + screenCenterDelta, 6, -12])
+	screenMount();
 
-	translate([47.5 / 2, -26 + 17.5 / 2, -7.75])
-	usbCutOut();
-
-	translate([0, -10, 2])
-	fingerGrip();
+	translate([-47.5 / 2 + 8.5, -26, -12])
+	mcuMount();
 }
 
-translate([-34.8 / 2 + screenCenterDelta, 6, -12])
-screenMount();
-
-translate([-47.5 / 2 + 8.5, -26, -12])
-mcuMount();
+wallet();
