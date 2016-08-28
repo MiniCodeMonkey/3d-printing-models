@@ -109,8 +109,8 @@ module rightPrint() {
     }
 }
 
-//rotate([90, 0, 0])
-//leftPrint();
-
 rotate([90, 0, 0])
-rightPrint();
+leftPrint();
+
+//rotate([90, 0, 0])
+//rightPrint();
