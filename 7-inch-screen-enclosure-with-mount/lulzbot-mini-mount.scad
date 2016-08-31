@@ -27,25 +27,23 @@ module screenHoles() {
 
 module printerSide() {
     difference() {
-        cube([60, mountWidth, mountThickness], center = true);
+        cube([40, mountWidth, mountThickness], center = true);
         
-        translate([-10, 0, 0])
+        translate([-3, 0, 0])
         lulzbotHoles();
     }
 }
 
 module screenSide() {
-    translate([50, 0, 12])
+    translate([36.3, 0, 9.69])
     rotate([0, -30, 0])
     difference() {
-        cube([50, mountWidth, mountThickness], center = true);
+        cube([40, mountWidth, mountThickness], center = true);
         
-        translate([21, 0, 0])
+        translate([15.5, 0, 0])
         screenHoles();
     }
 }
 
-union() {
-    printerSide();
-    screenSide();
-}
+printerSide();
+screenSide();
