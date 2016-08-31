@@ -45,5 +45,10 @@ module screenSide() {
     }
 }
 
-printerSide();
-screenSide();
+module fullMount() {
+    printerSide();
+    screenSide();
+}
+
+rotate([90, 0, 0])
+fullMount();
