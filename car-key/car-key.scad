@@ -12,10 +12,10 @@ usbHeight = 4;
 renderPart = "bottom"; // bottom, top, or all
 enableMockup = false;
 
-$fn=20;
+$fn=100;
 
 module screenCutOut() {
-	cylinder(10, d=screenWidthAndHeight, center = true, $fn=250);
+	cylinder(10, d=screenWidthAndHeight, center = true);
 }
 
 module mainBox() {
@@ -30,20 +30,20 @@ module mainBox() {
 				cylinder(boxDepth - thickness, d = boxWidth - thickness, center = true);
 			}
 
-			translate([35, 0, 0])
+			translate([35 + 4, 0, 0])
 			minkowski() {
-				cube([30, 27, boxDepth], center = true);
+				cube([30 + 10, 30, boxDepth], center = true);
 				sphere(r=cornerRadius);
 			}
 		}
 
-		translate([32.5, 0, 0])
-		cube([35, 27, boxDepth - thickness], center = true);
+		translate([32.5 + 4, 0, 0])
+		cube([35 + 10, 30, boxDepth - thickness], center = true);
 	}
 }
 
 module buttonCutout() {
-	cylinder(h=100, r=2, $fn=250);
+	cylinder(h=100, r=2);
 }
 
 module usbCutOut() {
@@ -51,7 +51,7 @@ module usbCutOut() {
 }
 
 module standoff() {
-	cylinder(h=3, r=1);
+	cylinder(h=5, r=0.75);
 }
 
 module pcbStandOffs() {
@@ -89,7 +89,7 @@ difference() {
 	translate([25, 0, 0])
 	buttonCutout();
 
-	translate([50, 0, -2])
+	translate([58, 0, -2])
 	usbCutOut();
 
 	topPartHeight = 1.8;
@@ -104,7 +104,7 @@ difference() {
 }
 
 if (renderPart != "top") {
-	translate([22, 0, 0])
+	translate([22 + 10, 0, 0])
 	pcbStandOffs();
 }
 
@@ -117,7 +117,7 @@ if (enableMockup) {
 	if (renderPart != "top") {
 		color("red")
 		rotate([0, 0, 180])
-		translate([-52, -8, -4.7 + thickness])
+		translate([-52 - 10, -8, -4.7 + thickness])
 		import("vendor/Adafruit_Feather_Bluefruit_LE_32u4_wo_header.stl");
 	}
 }
