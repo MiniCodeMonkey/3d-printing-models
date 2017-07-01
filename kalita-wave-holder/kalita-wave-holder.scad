@@ -22,14 +22,14 @@ module base() {
     cube([holderThickness * 3, baseWidth, holderThickness], center = true);
 }
 
-module base2() {
-    difference() {
-        %translate([(-holderDepth / 2) - 2, 0, 0])
-        cube([holderThickness * 3, baseWidth, holderThickness* 4], center = true);
-
-        #translate([(-holderDepth / 2) - 2, 0, 0])
-        rotate([90, 0, 0])
-        cylinder(h = holderThickness * 3, d = baseWidth, center = true, $fn = 3);
+module baseSupport() {
+    translate([(-holderDepth / 2) - 2, 0, 0])
+    
+    intersection() {
+        cube([holderThickness * 3, baseWidth, holderThickness * 4], center = true);
+        
+        translate([-holderThickness * 2, 0, 0])
+        sphere(d = (holderThickness * 6));
     }
 }
 
@@ -45,15 +45,25 @@ module holder() {
     }
 }
 
+module holderSupport() {
+    translate([0, -holderWidth / 2 - holderThickness, -holderThickness / 2])
+    cube([holderDepth / 2.5, holderThickness, holderThickness]);
+    
+    translate([0, -holderWidth / 2 + holderWidth, -holderThickness / 2])
+    cube([holderDepth / 2.5, holderThickness, holderThickness]);
+}
+
 difference() {
     union() {
-        base2();
+        base();
+        baseSupport();
         holder();
+        holderSupport();
     }
     
-    translate([(-holderDepth / 2) + (holderThickness / 2) - 1, 0, 8])
+    translate([(-holderDepth / 2) + (holderThickness / 2) - 1, 8, 0])
 	screwHole();
 
-    translate([(-holderDepth / 2) + (holderThickness / 2) - 1, 0, -8])
+    translate([(-holderDepth / 2) + (holderThickness / 2) - 1, -8, 0])
 	screwHole();
 }
