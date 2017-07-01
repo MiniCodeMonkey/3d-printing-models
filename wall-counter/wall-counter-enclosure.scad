@@ -13,11 +13,6 @@ enclosureOutsideWidth = enclosureInsideWidth + (enclosureThickness * 2);
 enclosureOutsideDepth = enclosureInsideDepth + (enclosureThickness * 2);
 enclosureOutsideHeight = enclosureInsideHeight + (enclosureThickness * 2);
 
-railHeight = 1.5;
-railWidth = railHeight * 2;
-
-snapGuideThickness = 1.5;
-
 centerHoleRadius = enclosureInsideDepth / 3;
 
 cableHoleRadius = 5.5;
@@ -34,42 +29,35 @@ module combinedSevenSegDisplay() {
 	sevenSegDisplay();
 }
 
+module roundedEdge() {
+	rotate([90, 0, 0])
+	translate([0, enclosureOutsideHeight / 2 - enclosureThickness, -enclosureOutsideDepth / 2 + enclosureThickness])
+	cylinder(h = enclosureOutsideDepth, d=enclosureOutsideHeight, center = true);
+}
+
 module enclosure() {
 	union() {
 		difference() {
-			// Outside
-			minkowski() {
+			union() {
+				// Outside
 				translate([-enclosureThickness, -enclosureThickness, -enclosureThickness])
 				cube([enclosureOutsideWidth, enclosureOutsideDepth, enclosureOutsideHeight]);
-				
-				cylinder(r = enclosureRoundedCornerRadius);
+
+				// Left rounded edge
+				roundedEdge();
+
+				// Right rounded edge
+				translate([enclosureOutsideWidth, 0, 0])
+				roundedEdge();
 			}
 			
 			// Inside
 			cube([enclosureInsideWidth, enclosureInsideDepth, enclosureInsideHeight]);
 		}
 
-		translate([0, -displayDepth, 0])
+		translate([0, -enclosureThickness , 0])
 		cube([enclosureInsideWidth, displayDepth, enclosureInsideHeight]);
 	}
-}
-
-module labelRail() {
-	union() {
-		// Horizontal
-		translate([-enclosureOutsideWidth / 2, -enclosureThickness, -enclosureThickness / 2])
-		cube([enclosureOutsideWidth * 2, railWidth, railHeight]);
-
-		// Vertical
-		translate([-enclosureOutsideWidth / 2, -enclosureThickness + (railWidth / 2), -enclosureThickness / 2 - railWidth])
-		cube([enclosureOutsideWidth * 2, railHeight, railWidth]);
-	}
-}
-
-module labelRailSupport() {
-	// Horizontal
-	translate([-enclosureThickness, -enclosureThickness / 2, 0])
-	cube([enclosureOutsideWidth, railWidth, railHeight]);
 }
 
 module centerSupport() {
@@ -113,19 +101,16 @@ module entireClosure() {
 	difference() {
 		difference() {
 			difference() {
-				difference() {
-					union() {
-						enclosure();
-						centerSupport();
-					}
-
-					translate([0, -(displayDepth * 2.5), enclosureInsideHeight / 2 - displayHeight / 2])
-					scale([1, 5, 1])
-					combinedSevenSegDisplay();
+				union() {
+					enclosure();
+					centerSupport();
 				}
-				labelRail();
+
+				translate([0, -(displayDepth * 2.5), enclosureInsideHeight / 2 - displayHeight / 2])
+				scale([1, 5, 1])
+				combinedSevenSegDisplay();
 			}
-			//centerHole();
+			centerHole();
 		}
 		cableHole();
 	}
@@ -139,13 +124,6 @@ module enclosureBack() {
 			translate([-enclosureThickness - enclosureOutsideWidth / 2, -enclosureThickness * 2, -enclosureThickness - enclosureOutsideHeight / 2])
 			cube([enclosureOutsideWidth * 2, enclosureOutsideDepth, enclosureOutsideHeight * 2]);
 		}
-
-		scale([1, 1, 1]) // For a better fit
-		snapGuide();
-
-		translate([enclosureOutsideWidth / 2 + displaySpacing / 2, 0, 0])
-		scale([1, 1, 1]) // For a better fit
-		snapGuide();
 	}
 }
 
@@ -158,37 +136,7 @@ module enclosureFront() {
 	}
 }
 
-module snapGuide() {
-	spacingDelta = 0.3;
-
-	difference() {
-		// Outside
-		translate([
-			spacingDelta,
-			enclosureInsideDepth - (enclosureInsideDepth / 5),
-			spacingDelta
-		])
-		cube([
-			(enclosureInsideWidth / 2) - (displaySpacing / 2) - (spacingDelta * 2),
-			enclosureInsideDepth / 5,
-			enclosureInsideHeight - (spacingDelta * 2)
-		]);
-
-		// Inside
-		translate([
-			snapGuideThickness + spacingDelta,
-			enclosureInsideDepth - (enclosureInsideDepth / 5),
-			snapGuideThickness + spacingDelta
-		])
-		cube([
-			(enclosureInsideWidth / 2) - (displaySpacing / 2) - (snapGuideThickness * 2)  - (spacingDelta * 2),
-			(enclosureInsideDepth / 5),
-			enclosureInsideHeight - (snapGuideThickness * 2) - (spacingDelta * 2)
-		]);
-	}
-}
-
-explodeSpacing = 50;
+explodeSpacing = 0;
 
 module splitEnclosure() {
 	enclosureBack();
@@ -214,43 +162,6 @@ module right() {
 		cube([enclosureOutsideWidth, enclosureOutsideDepth * 4, enclosureOutsideHeight * 2]);
 	}
 }
-
-module logo() {
-    rotate([90, 0, 0])
-    scale([0.4, 0.4, 0.4])
-    linear_extrude(height = 7, center = true, convexity = 1000, twist = 0)
-    import("logo.dxf");
-}
-
-module labelText() {
-	linear_extrude(height = 2) {
-		text("Marketplace Clips", font = "Liberation Sans", size = 10);
-	};
-}
-
-module labelSign() {
-	height = enclosureOutsideHeight * 0.8;
-
-	union() {
-		// Horizontal bar
-		translate([-explodeSpacing, -explodeSpacing - railHeight, -railHeight + 0.5])
-		cube([enclosureOutsideWidth / 2, railWidth, railHeight]);
-
-		// Main area
-		translate([-explodeSpacing, -explodeSpacing, -height + 0.5])
-		cube([enclosureOutsideWidth / 2, railHeight, height]);
-	}
-
-	translate([-explodeSpacing + 5, -explodeSpacing, -20])
-	logo();
-
-	translate([-explodeSpacing + 5, -explodeSpacing, -35])
-	rotate([90, 0, 0]) labelText();
-}
-
-translate([-enclosureThickness - 2, 0, 0])
-scale([0.90, 0.90, 0.90]) // For a better fit
-labelSign();
 
 left();
 
